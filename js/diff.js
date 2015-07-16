@@ -91,7 +91,7 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
             forEach(oldObj, function(value, key) {
                 var newValue    = newObj[key];
 
-                this.value[key] = diff(value, newValue, key in oldObj, key in newObj);
+                this.value[key] = diff(value, newValue, true, key in newObj);
 
                 if (this.value[key].status != -1) {
                     this.status = 1;
@@ -100,10 +100,14 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
 
             forEach(newObj, function(value, key) {
                 if (!oldObj[key]) {
-                    this.value[key] = diff(oldObj, value, false, true);
+                    this.value[key] = diff(undefined, value, false, true);
                     this.status = 1;
                 }
             }, difference);
+
+            if (difference.status == 0) {
+                difference.status   = -1;
+            }
             break;
         case 'object-undefined':
             forEach(oldObj, function(value, key) {
@@ -117,28 +121,58 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
             }
             break;
         case 'undefined-object':
+            difference.newValue = {};
+
             forEach(newObj, function(value, key) {
-                this.value[key] = diff(undefined, value, false, true);
+                this.newValue[key]  = diff(undefined, value, false, true);
             }, difference);
 
-            if (oldHasOwn) {
-                difference.status   = 1;
+            if (!oldHasOwn) {
+                difference.status   = 2;
             } else {
-                difference.status   = -2;
+                difference.status   = 1;
             }
             break;
         default:
-            difference.value    = oldObj;
+            if (oldType == 'object') {
+                forEach(oldObj, function(value, key) {
+                    this.value[key] = diff(value, undefined, true, false);
+                }, difference);
 
-            if (oldObj === newObj) {
-                difference.status   = -1;
-            } else if (newObj === undefined && !newHasOwn) {
-                difference.status   = -2;
-            } else {
                 difference.status   = 1;
-                difference.newValue = newObj;
+            } else if (newType == 'object') {
+                forEach(newObj, function(value, key) {
+                    this.value[key] = diff(undefined, value, false, true);
+                }, difference);
+
+                difference.status   = 1;
+            } else {
+                difference.value    = oldObj;
+
+                if (oldObj === newObj) {
+                    difference.status   = -1;
+                } else if (newObj === undefined && !newHasOwn) {
+                    difference.status   = -2;
+                } else if (oldObj === undefined && !oldHasOwn) {
+                    difference.status   = 2;
+                    difference.newValue = newObj;
+                } else {
+                    difference.status   = 1;
+                    difference.newValue = newObj;
+                }
             }
             break;
+    }
+
+    switch (difference.status) {
+        case -2:
+        case -1:
+            delete difference.newValue;
+            delete difference.newType;
+            break;
+        case 2:
+            delete difference.value;
+            delete difference.type;
     }
 
     return difference;
