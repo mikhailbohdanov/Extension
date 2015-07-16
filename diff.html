@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/ion.rangeSlider.css"/>
+    <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css"/>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Choose shots rahge</h2>
+            <div>
+                <span class="text-primary">Domain:</span>
+                <span id="domain" class="text-muted"></span>
+            </div>
+
+            <div>
+                <span class="text-primary">Snapshot: </span>
+                <span id="snapshotName" class="text-muted"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <input type="text" id="shotRange" value=""/>
+        </div>
+    </div>
+
+    <div class="row diffRow" id="cookiesDiff">
+        <h3>Cookies</h3>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <td>
+                    <p>
+                        <strong>Name:</strong>
+                        _ga
+                    </p>
+                    <p>
+                        <strong>Value:</strong>
+                        GA1.2.1719458220.1436867443
+                    </p>
+                    <p>
+                        <strong>Expiration:</strong>
+                        1499939443
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <strong>Name:</strong>
+                        _ga
+                    </p>
+                    <p>
+                        <strong>Value:</strong>
+                        GA1.2.1719458220.1436867443
+                    </p>
+                    <p>
+                        <strong>Expiration:</strong>
+                        1499939443
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <strong>Name:</strong>
+                        _ga
+                    </p>
+                    <p>
+                        <strong>Value:</strong>
+                        GA1.2.1719458220.1436867443
+                    </p>
+                    <p>
+                        <strong>Expiration:</strong>
+                        1499939443
+                    </p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row" id="localStorageDiff">
+        <div class="col-lg-6">
+
+        </div>
+        <div class="col-lg-6">
+
+        </div>
+    </div>
+</div>
+
+
+
+<script src="js/jquery.js"></script>
+<script src="js/ion.rangeSlider.min.js"></script>
+<script src="js/main-fn.js"></script>
+<script src="js/deep-diff.js"></script>
+<script src="js/diff.js"></script>
+</body>
+</html>

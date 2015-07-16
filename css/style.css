@@ -1,0 +1,69 @@
+/* - - - Reset - - - */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+input, select, textarea, button, svg, path {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    vertical-align: baseline;
+    background: transparent;
+    font-family: Tahoma, Arial;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+:focus {
+    outline: 0;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* - - - Tags - - - */
+html {
+    position: relative;
+}
+body {
+    min-width: 200px;
+    color: #000000;
+}
+
+/* - - - Common - - - */
+.container {
+    position: relative;
+    padding-top: 15px;
+}
+.row {
+    margin-bottom: 15px;
+}
+.diffRow {
+    overflow-x: auto;
+}
+
+/* - - - Margin - - - */
+.mt5 {
+    margin-top: 5px;
+}
+
+

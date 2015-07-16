@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="container" id="containerMenu">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h4>Diff states</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <button class="btn btn-block btn-primary btn-sm action" action="showFormSnapshot">Add snapshot</button>
+            <button class="btn btn-block btn-success btn-sm snapshotExistsCurrent action" action="next">Next shot</button>
+            <button class="btn btn-block btn-success btn-sm snapshotExistsCurrent action" action="diff">Diff shots</button>
+            <button class="btn btn-block btn-danger btn-sm snapshotExistsCurrent action" action="removeSnapshotsCurrent">Remove current snapshots</button>
+            <button class="btn btn-block btn-danger btn-sm snapshotExistsAll action" action="removeSnapshotsAll">Remove all snapshots</button>
+            <button class="btn btn-block btn-danger btn-sm action" action="clearData">Clear site data</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="container hidden" id="containerSnapshotCreate">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h4>Create snapshot</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="form-group">
+                <input name="name" type="name" class="form-control input-sm" id="name" placeholder="Name">
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input name="cookies" type="checkbox"> Cookies
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input name=localStorage" type="checkbox"> Local Storage
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input name="sessionStorage" type="checkbox"> Session Storage
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input name="DOM" type="checkbox"> DOM
+                </label>
+            </div>
+            <button class="btn btn-block btn-default btn-sm action" action="createSnapshot">Create</button>
+            <button class="btn btn-block btn-warning btn-sm action" action="cancel">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="container hidden" id="containerSnapshotList">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h4>Select snapshot</h4>
+
+            <div id="snapshotList"></div>
+
+            <button class="btn btn-block btn-warning btn-sm mt5 action" action="cancel">Cancel</button>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="js/jquery.js"></script>
+<script src="js/main-fn.js"></script>
+<script src="js/diff.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
