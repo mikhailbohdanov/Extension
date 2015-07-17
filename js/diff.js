@@ -6,6 +6,8 @@ var domain          = $('#domain'),
     shotRange       = $('#shotRange'),
 
     cookiesDiff     = $('#cookiesDiff'),
+    cookiesWrapper  = $('#cookiesWrapper'),
+
     localStorageDiff= $('#localStorageDiff'),
 
     SNAPSHOT;
@@ -45,26 +47,22 @@ function init() {
 function diffState(indexFirst, indexLast) {
     var states  = SNAPSHOT.states.slice(indexFirst, indexLast + 1),
         diffs   = [],
-        diff, state1, state2;
+        _diff, state1, state2;
 
     for (var i = 1; i < states.length; i++) {
-        diff    = {};
+        _diff   = {};
 
         state1  = states[i - 1];
         state2  = states[i];
 
-        diff.timeLeft   = state1.time;
-        diff.timeRight  = state2.time;
+        _diff.timeLeft  = state1.time;
+        _diff.timeRight = state2.time;
 
         if (SNAPSHOT.config.cookies) {
-            //TODO diff cookie elements
-
-            //diff.cookies    = diffCookies(makeCookie(state1.cookies), makeCookie(state2.cookies));
+            _diff.cookies   = diff(state1.cookies, state2.cookies);
         }
 
-
-
-        diffs.push(diff);
+        diffs.push(_diff);
     }
 
     buildTable(diffs);
@@ -178,90 +176,93 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
     return difference;
 }
 
-function diffChanges(oldObj, newObj, hasOwnOld, hasOwnNew) {
-    var difference  = {
-        type    : typeof oldObj,
-        status  : 0,
-        value   : undefined
-    };
+function buildTable(data) {
+    var tableData, i, tmp, table, row, cell, header, p, strong;
 
-    switch (difference.type) {
-        case 'object':
-            difference.value = {};
+    if (SNAPSHOT.config.cookies) {
+        // Cookies
 
-            if (typeof newObj === 'undefined') {
-                forEach(oldObj, function(value, key) {
-                    this.value[key] = diffChanges(value, undefined, key in oldObj, false);
+        tableData   = {};
 
-                    if (!hasOwnNew) {
-                        this.status     = -2;
-                    } else {
-                        this.status     = 1;
-                        this.newValue   = newObj;
-                    }
-                }, difference);
+        for (i = 0; i < data.length; i++) {
+            tmp = data[i].cookies.value;
 
-                break;
-            }
-
-            forEach(oldObj, function(value, key) {
-                var newValue    = newObj[key];
-
-                this.value[key] = diffChanges(value, newValue, key in oldObj, key in newObj);
-
-                if (this.value[key].status != -1) {
-                    this.status   = 1;
+            forEach(tmp, function(cookie, name) {
+                if (!tableData[name]) {
+                    tableData[name] = [];
                 }
-            }, difference);
 
-            forEach(newObj, function(value, key) {
-                if (!oldObj[key]) {
-                    var _oldObj;
-                    switch (typeof value) {
-                        case 'object':
-                            _oldObj = {};
-                            break;
-                        default:
-                            _oldObj = undefined;
-                            break;
-                    }
+                tableData[name][i]  = cookie;
+            });
+        }
 
-                    this.value[key] = diffChanges(_oldObj, value, false, true);
-                    this.value[key].status  = 2;
-                }
-            }, difference);
-            break;
-        case 'undefined':
-            if (!hasOwnOld) {
-                difference.status   = 2;
-                difference.newValue = newObj;
-                break;
-            }
-        default:
-            difference.value    = oldObj;
-
-            if (oldObj === newObj) {
-                difference.status   = -1;
-            } else if (newObj === undefined && !hasOwnNew) {
-                difference.status   = -2;
-            } else {
-                difference.status   = 1;
-                difference.newValue = newObj;
-            }
-            break;
+        createTable(tableData, cookiesWrapper);
     }
 
-    return difference;
-}
 
-
-function buildTable(data) {
-    var table   = document.createElement('table');
-
-
-    console.log(data);
 
 }
+function createTable(tableData, insertTo) {
+    var i, table, row;
+
+    table   = document.createElement('table');
+    table.className = 'table table-bordered';
+
+    forEach(tableData, function(data , name) {
+        row = table.insertRow(-1);
+
+        for (i = 0; i < data.length; i++ ) {
+            insertValue(row, name, data[i]);
+        }
+    });
+
+    insertTo
+        .empty()
+        .append(table);
+}
+function insertValue(row, name, data) {
+    var cell    = row.insertCell(-1),
+        p, type;
+
+    if (data) {
+        switch (data.status) {
+            case -2:
+                cell.className  = 'danger';
+                break;
+            case 1:
+                cell.className  = 'warning';
+                break;
+            case 2:
+                cell.className  = 'success';
+                break
+        }
+
+        p   = document.createElement('p');
+        p.innerHTML = '<strong>Name:</strong> ' + name;
+        cell.appendChild(p);
+
+        forEach(data.value || data.newValue, function(value, _name) {
+            p   = document.createElement('p');
+
+            p.innerHTML = '<strong>' + _name + ': </strong>';
+            switch (value.status) {
+                case -2:
+                case -1:
+                    p.innerHTML += value.value;
+                    break;
+                case 1:
+                    p.innerHTML += value.value + ' => ' + value.newValue;
+                    break;
+                case 2:
+                    p.innerHTML += value.newValue;
+                    break;
+            }
+
+            cell.appendChild(p);
+        });
+    }
+}
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
