@@ -246,8 +246,6 @@ var commonFN = {
         var manager_url = chrome.extension.getURL("diff.html?index=" + index);
         focusOrCreateTab(manager_url);
     },
-    list: function () {
-    },
 
     removeSnapshotsCurrent: function () {
         chrome.extension.sendRequest(null, {action: 'removeForDomain', domain: _url.host}, function () {

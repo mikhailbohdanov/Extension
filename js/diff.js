@@ -177,7 +177,7 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
 }
 
 function buildTable(data) {
-    var tableData, i, tmp, table, row, cell, header, p, strong;
+    var tableData, i, tmp;
 
     if (SNAPSHOT.config.cookies) {
         // Cookies
@@ -196,73 +196,119 @@ function buildTable(data) {
             });
         }
 
-        createTable(tableData, cookiesWrapper);
+        cookiesWrapper
+            .empty()
+            .append(createTable(tableData, 'cookies'));
     }
 
 
 
+
 }
-function createTable(tableData, insertTo) {
-    var i, table, row;
 
-    table   = document.createElement('table');
-    table.className = 'table table-bordered';
+function createTable(data, way) {
+    var
+        table   = $('<table/>');
 
-    forEach(tableData, function(data , name) {
-        row = table.insertRow(-1);
+    table.addClass('table table-bordered');
+    table.attr('way', way);
 
-        for (i = 0; i < data.length; i++ ) {
-            insertValue(row, name, data[i]);
-        }
+    forEach(data, function(value, key) {
+        insertRow(table, key, value, way);
     });
 
-    insertTo
-        .empty()
-        .append(table);
+    return table;
 }
-function insertValue(row, name, data) {
-    var cell    = row.insertCell(-1),
-        p, type;
+function insertRow(table, name, data, way) {
+    var
+        row     = $('<td/>');
 
-    if (data) {
-        switch (data.status) {
-            case -2:
-                cell.className  = 'danger';
-                break;
-            case 1:
-                cell.className  = 'warning';
-                break;
-            case 2:
-                cell.className  = 'success';
-                break
-        }
+    way = way + '-' + name;
 
-        p   = document.createElement('p');
-        p.innerHTML = '<strong>Name:</strong> ' + name;
-        cell.appendChild(p);
+    row.attr('way', way);
 
-        forEach(data.value || data.newValue, function(value, _name) {
-            p   = document.createElement('p');
 
-            p.innerHTML = '<strong>' + _name + ': </strong>';
-            switch (value.status) {
-                case -2:
-                case -1:
-                    p.innerHTML += value.value;
-                    break;
-                case 1:
-                    p.innerHTML += value.value + ' => ' + value.newValue;
-                    break;
-                case 2:
-                    p.innerHTML += value.newValue;
-                    break;
-            }
-
-            cell.appendChild(p);
-        });
-    }
 }
 
+
+//
+//function createTable(tableData, insertTo, way) {
+//    var i, table, row;
+//
+//    table   = document.createElement('table');
+//    table.className = 'table table-bordered';
+//
+//    forEach(tableData, function(data , name) {
+//        row = table.insertRow(-1);
+//
+//        for (i = 0; i < size(data); i++ ) {
+//            insertCell(row, name, data[i], way + '-' + name);
+//        }
+//    });
+//
+//    insertTo
+//        .empty()
+//        .append(table);
+//}
+//function insertCell(row, name, data, way) {
+//    var cell    = row.insertCell(-1),
+//        p, _cell;
+//
+//    if (data) {
+//        cell.setAttribute('way', way);
+//        _cell   = $(cell);
+//
+//        p   = document.createElement('p');
+//        p.innerHTML = '<strong>Name:</strong> ' + name;
+//        cell.appendChild(p);
+//
+//        switch (data.status) {
+//            case -2:
+//                cell.className  = 'danger';
+//                insertOld(cell, data, name, way);
+//                break;
+//            case -1:
+//                insertOld(cell, data, name, way);
+//                break;
+//            case 1:
+//                cell.className  = 'warning';
+//                insertChange(cell, data, name, way);
+//                break;
+//            case 2:
+//                cell.className  = 'success';
+//                insertNew(cell, data, name, way);
+//                break;
+//        }
+//    }
+//}
+//function insertOld(cell, data, name, way) {
+//    if (data.type == 'object') {
+//        createTable(data.value, $(cell), way);
+//    } else {
+//        var p = document.createElement('p');
+//        p.innerHTML = name + ': ' + data.value;
+//
+//        cell.appendChild(p);
+//    }
+//}
+//function insertChange(cell, data, name, way) {
+//    if (data.type == 'object') {
+//
+//    } else {
+//
+//    }
+//}
+//function insertNew(cell, data, name, way) {
+//    if (data.type == 'object') {
+//
+//    } else {
+//
+//    }
+//}
+//
+//function toggleData(way) {
+//
+//}
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -282,6 +328,12 @@ document.addEventListener('DOMContentLoaded', function() {
             SNAPSHOT    = snapshot;
             init();
         }
+    });
+
+    $(document).on('click', 'p[toggler]', function() {
+        var way = $(this).attr('toggler');
+
+        $('*[way="' + way + '"]').toggleClass('hidden');
     });
 });
 
