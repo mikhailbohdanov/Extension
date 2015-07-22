@@ -38,6 +38,7 @@ q:before, q:after {
 table {
     border-collapse: collapse;
     border-spacing: 0;
+    margin-bottom: 0px !important;
 }
 
 /* - - - Tags - - - */
@@ -61,6 +62,18 @@ body {
     overflow-x: auto;
 }
 
+.key {
+    display: block;
+}
+.key.linked {
+    cursor: pointer;
+}
+
+
+
+
+
+
 p[toggler] {
     cursor: pointer;
 }
@@ -69,6 +82,32 @@ p[toggler]:hover {
 }
 
 
+.key[parent] {
+    cursor: pointer;
+}
+.key {
+    display: block;
+}
+.key:hover {
+    text-decoration: none;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+.key.active > .obj {
+    display: none;
+}
+.active {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+
+
+.table .table {
+    background-color: transparent;
+}
+
+.table > tbody > tr > td {
+    border-top: none;
+}
 
 /* - - - Margin`s - - - */
 .mA {

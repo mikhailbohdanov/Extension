@@ -1,42 +1,44 @@
 /**
  * Created by Mykhailo_Bohdanov on 13/07/2015.
  */
-var domain          = $('#domain'),
-    snapshotName    = $('#snapshotName'),
-    shotRange       = $('#shotRange'),
+var domain = $('#domain'),
+    snapshotName = $('#snapshotName'),
+    shotRange = $('#shotRange'),
 
-    cookiesDiff     = $('#cookiesDiff'),
-    cookiesWrapper  = $('#cookiesWrapper'),
+    cookiesDiff = $('#cookiesDiff'),
+    cookiesWrapper = $('#cookiesWrapper'),
 
-    localStorageDiff= $('#localStorageDiff'),
+    localStorageDiff = $('#localStorageDiff'),
+
+    BUILDED_ELEMENTS = {},
 
     SNAPSHOT;
 
 function init() {
     if (SNAPSHOT.states.length > 1) {
-        var length  = SNAPSHOT.states.length,
-            grid    = [];
+        var length = SNAPSHOT.states.length,
+            grid = [];
 
 
-        forEach(SNAPSHOT.states, function(state) {
+        forEach(SNAPSHOT.states, function (state) {
             grid.push(state.time);
         });
 
         shotRange.ionRangeSlider({
-            type            : 'double',
-            min             : 0,
-            max             : length - 1,
-            from            : length - 2,
-            to              : length - 1,
-            min_interval    : 1,
-            drag_interval   : true,
-            grid            : true,
-            grid_num        : length,
-            values          : grid,
-            onFinish        : function(data) {
+            type: 'double',
+            min: 0,
+            max: length - 1,
+            from: length - 2,
+            to: length - 1,
+            min_interval: 1,
+            drag_interval: true,
+            grid: true,
+            grid_num: length,
+            values: grid,
+            onFinish: function (data) {
                 diffState(data.from, data.to);
             },
-            onStart        : function(data) {
+            onStart: function (data) {
                 diffState(data.from, data.to);
             }
         });
@@ -45,21 +47,21 @@ function init() {
 }
 
 function diffState(indexFirst, indexLast) {
-    var states  = SNAPSHOT.states.slice(indexFirst, indexLast + 1),
-        diffs   = [],
+    var states = SNAPSHOT.states.slice(indexFirst, indexLast + 1),
+        diffs = [],
         _diff, state1, state2;
 
     for (var i = 1; i < states.length; i++) {
-        _diff   = {};
+        _diff = {};
 
-        state1  = states[i - 1];
-        state2  = states[i];
+        state1 = states[i - 1];
+        state2 = states[i];
 
-        _diff.timeLeft  = state1.time;
+        _diff.timeLeft = state1.time;
         _diff.timeRight = state2.time;
 
         if (SNAPSHOT.config.cookies) {
-            _diff.cookies   = diff(state1.cookies, state2.cookies);
+            _diff.cookies = diff(state1.cookies, state2.cookies);
         }
 
         diffs.push(_diff);
@@ -69,25 +71,25 @@ function diffState(indexFirst, indexLast) {
 }
 function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
     if (isUndefined(oldHasOwn) && isUndefined(newHasOwn)) {
-        oldHasOwn   = true;
-        newHasOwn   = true;
+        oldHasOwn = true;
+        newHasOwn = true;
     }
 
-    var difference  = {
-            status  : 0,
-            value   : {},
-            type    : typeof oldObj,
-            newType : typeof newObj
+    var difference = {
+            status: 0,
+            value: {},
+            type: typeof oldObj,
+            newType: typeof newObj
         },
         oldType = difference.type,
         newType = difference.newType;
 
     switch (oldType + '-' + newType) {
         case 'object-object':
-            difference.value    = {};
+            difference.value = {};
 
-            forEach(oldObj, function(value, key) {
-                var newValue    = newObj[key];
+            forEach(oldObj, function (value, key) {
+                var newValue = newObj[key];
 
                 this.value[key] = diff(value, newValue, true, key in newObj);
 
@@ -96,7 +98,7 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
                 }
             }, difference);
 
-            forEach(newObj, function(value, key) {
+            forEach(newObj, function (value, key) {
                 if (!oldObj[key]) {
                     this.value[key] = diff(undefined, value, false, true);
                     this.status = 1;
@@ -104,58 +106,58 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
             }, difference);
 
             if (difference.status == 0) {
-                difference.status   = -1;
+                difference.status = -1;
             }
             break;
         case 'object-undefined':
-            forEach(oldObj, function(value, key) {
+            forEach(oldObj, function (value, key) {
                 this.value[key] = diff(value, undefined, true, false);
             }, difference);
 
             if (newHasOwn) {
-                difference.status   = 1;
+                difference.status = 1;
             } else {
-                difference.status   = -2;
+                difference.status = -2;
             }
             break;
         case 'undefined-object':
             difference.newValue = {};
 
-            forEach(newObj, function(value, key) {
-                this.newValue[key]  = diff(undefined, value, false, true);
+            forEach(newObj, function (value, key) {
+                this.newValue[key] = diff(undefined, value, false, true);
             }, difference);
 
             if (!oldHasOwn) {
-                difference.status   = 2;
+                difference.status = 2;
             } else {
-                difference.status   = 1;
+                difference.status = 1;
             }
             break;
         default:
             if (oldType == 'object') {
-                forEach(oldObj, function(value, key) {
+                forEach(oldObj, function (value, key) {
                     this.value[key] = diff(value, undefined, true, false);
                 }, difference);
 
-                difference.status   = 1;
+                difference.status = 1;
             } else if (newType == 'object') {
-                forEach(newObj, function(value, key) {
+                forEach(newObj, function (value, key) {
                     this.value[key] = diff(undefined, value, false, true);
                 }, difference);
 
-                difference.status   = 1;
+                difference.status = 1;
             } else {
-                difference.value    = oldObj;
+                difference.value = oldObj;
 
                 if (oldObj === newObj) {
-                    difference.status   = -1;
+                    difference.status = -1;
                 } else if (newObj === undefined && !newHasOwn) {
-                    difference.status   = -2;
+                    difference.status = -2;
                 } else if (oldObj === undefined && !oldHasOwn) {
-                    difference.status   = 2;
+                    difference.status = 2;
                     difference.newValue = newObj;
                 } else {
-                    difference.status   = 1;
+                    difference.status = 1;
                     difference.newValue = newObj;
                 }
             }
@@ -182,17 +184,17 @@ function buildTable(data) {
     if (SNAPSHOT.config.cookies) {
         // Cookies
 
-        tableData   = {};
+        tableData = {};
 
         for (i = 0; i < data.length; i++) {
             tmp = data[i].cookies.value;
 
-            forEach(tmp, function(cookie, name) {
+            forEach(tmp, function (cookie, name) {
                 if (!tableData[name]) {
                     tableData[name] = [];
                 }
 
-                tableData[name][i]  = cookie;
+                tableData[name][i] = cookie;
             });
         }
 
@@ -202,18 +204,16 @@ function buildTable(data) {
     }
 
 
-
-
 }
 
 function createTable(data, way) {
     var
-        table   = $('<table/>');
+        table = $('<table/>');
 
     table.addClass('table table-bordered');
     table.attr('way', way);
 
-    forEach(data, function(value, key) {
+    forEach(data, function (value, key) {
         insertRow(table, key, value, way);
     });
 
@@ -221,7 +221,7 @@ function createTable(data, way) {
 }
 function insertRow(table, name, data, way) {
     var
-        row     = $('<td/>');
+        row = $('<td/>');
 
     way = way + '-' + name;
 
@@ -311,29 +311,30 @@ function insertRow(table, name, data, way) {
 //}
 
 
-document.addEventListener('DOMContentLoaded', function() {
+$(function () {
     var search = {};
 
-    forEach(location.search.substring(1).split('&'), function(data) {
+    forEach(location.search.substring(1).split('&'), function (data) {
         data = data.split('=');
 
         search[data[0]] = data[1];
     });
 
-    chrome.extension.sendRequest(null, {action: 'get', index: search.index}, function(snapshot) {
+    chrome.extension.sendRequest(null, {action: 'get', index: search.index}, function (snapshot) {
         if (snapshot) {
             domain.text(snapshot.domain);
             snapshotName.text(snapshot.config.name);
 
-            SNAPSHOT    = snapshot;
+            SNAPSHOT = snapshot;
             init();
         }
     });
 
-    $(document).on('click', 'p[toggler]', function() {
+    $(document).on('click', 'p[toggler]', function () {
         var way = $(this).attr('toggler');
 
         $('*[way="' + way + '"]').toggleClass('hidden');
     });
 });
+
 
