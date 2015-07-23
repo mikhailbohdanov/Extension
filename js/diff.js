@@ -302,7 +302,7 @@ function insertCell(row, name, data, way) {
         }
 
         if (data.status == 1 && (data.type != data.newType || data.type != 'object')) {
-            div.append('<div>&gt;</div>');
+            div.append('<hr class="mt5 mb5"/>');
         }
 
         if (data.status > 0) {
