@@ -58,7 +58,7 @@ function isArrayLike(object) {
         return true;
     }
 
-    return isString(object) || isArray(object) || length === 0 || typeof length === 'number' && length > 0 && (length - 1) in object;
+    return isString(object) || isArray(object) || length === 0 || typeof length === 'number' && length > 0;
 }
 
 function isString(object) {

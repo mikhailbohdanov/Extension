@@ -46,29 +46,6 @@ function init() {
 
 }
 
-function diffState(indexFirst, indexLast) {
-    var states = SNAPSHOT.states.slice(indexFirst, indexLast + 1),
-        diffs = [],
-        _diff, state1, state2;
-
-    for (var i = 1; i < states.length; i++) {
-        _diff = {};
-
-        state1 = states[i - 1];
-        state2 = states[i];
-
-        _diff.timeLeft = state1.time;
-        _diff.timeRight = state2.time;
-
-        if (SNAPSHOT.config.cookies) {
-            _diff.cookies = diff(state1.cookies, state2.cookies);
-        }
-
-        diffs.push(_diff);
-    }
-
-    buildTable(diffs);
-}
 function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
     if (isUndefined(oldHasOwn) && isUndefined(newHasOwn)) {
         oldHasOwn = true;
@@ -178,6 +155,31 @@ function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
     return difference;
 }
 
+function diffState(indexFirst, indexLast) {
+    var states = SNAPSHOT.states.slice(indexFirst, indexLast + 1),
+        diffs = [],
+        _diff, state1, state2;
+
+    BUILDED_ELEMENTS    = {};
+
+    for (var i = 1; i < states.length; i++) {
+        _diff = {};
+
+        state1 = states[i - 1];
+        state2 = states[i];
+
+        _diff.timeLeft = state1.time;
+        _diff.timeRight = state2.time;
+
+        if (SNAPSHOT.config.cookies) {
+            _diff.cookies = diff(state1.cookies, state2.cookies);
+        }
+
+        diffs.push(_diff);
+    }
+
+    buildTable(diffs);
+}
 function buildTable(data) {
     var tableData, i, tmp;
 
@@ -198,6 +200,10 @@ function buildTable(data) {
             });
         }
 
+        forEach(tableData, function(values) {
+            values.length = data.length;
+        });
+
         cookiesWrapper
             .empty()
             .append(createTable(tableData, 'cookies'));
@@ -211,7 +217,6 @@ function createTable(data, way) {
         table = $('<table/>');
 
     table.addClass('table table-bordered');
-    table.attr('way', way);
 
     forEach(data, function (value, key) {
         insertRow(table, key, value, way);
@@ -220,67 +225,165 @@ function createTable(data, way) {
     return table;
 }
 function insertRow(table, name, data, way) {
-    var
-        row = $('<td/>');
+    var row = $('<tr/>');
 
     way = way + '-' + name;
+    if (!BUILDED_ELEMENTS[way]) {
+        BUILDED_ELEMENTS[way]   = [];
+    }
 
-    row.attr('way', way);
+    if (isArrayLike(data)) {
+        for (var i = 0; i < data.length; i++) {
+            insertCell(row, name, data[i], way);
+        }
+    } else {
+        insertCell(row, name, data, way);
+    }
 
+    table.append(row);
+}
+function insertCell(row, name, data, way) {
+    var cell    = $('<td/>'),
+        span, valueOld, valueNew;
 
+    if (data) {
+        cell.addClass('p0');
+
+        way = way + '-' + name;
+
+        if (!BUILDED_ELEMENTS[way]) {
+            BUILDED_ELEMENTS[way]   = [];
+        }
+
+        BUILDED_ELEMENTS[way].push(cell);
+
+        switch (data.status) {
+            case -2:
+                cell.addClass('danger');
+                span        = insertOld(name, data, way);
+                valueOld    = insertValue(data.value, data.type, way);
+                break;
+            case -1:
+                cell.addClass('active');
+                span        = insertOld(name, data, way);
+                valueOld    = insertValue(data.value, data.type, way);
+                break;
+            case 1:
+                cell.addClass('warning');
+                span        = insertChange(name, data, way);
+                valueOld    = insertValue(data.value, data.type, way);
+                valueNew    = insertValue(data.newValue, data.newType, way);
+                break;
+            case 2:
+                cell.addClass('success');
+                span        = insertNew(name, data, way);
+                valueNew    = insertValue(data.newValue, data.newType, way);
+                break;
+        }
+
+        span.on('click', function() {
+            forEach(BUILDED_ELEMENTS[way], function(_cell) {
+                _cell.toggleClass('actived');
+            });
+
+            row.toggleClass('actived');
+        });
+        cell
+            .append(span);
+
+        var div = $('<div/>');
+
+        div
+            .addClass('pl10 pr10 pb10')
+            .appendTo(cell);
+
+        if (data.status < 2) {
+            div.append(valueOld);
+        }
+
+        if (data.status == 1 && (data.type != data.newType || data.type != 'object')) {
+            div.append('<div>&gt;</div>');
+        }
+
+        if (data.status > 0) {
+            div.append(valueNew);
+        }
+    } else {
+        cell.addClass('active');
+    }
+
+    row.append(cell);
 }
 
+function insertOld(name, data, way) {
+    var span        = $('<span/>');
 
-//
-//function createTable(tableData, insertTo, way) {
-//    var i, table, row;
-//
-//    table   = document.createElement('table');
-//    table.className = 'table table-bordered';
-//
-//    forEach(tableData, function(data , name) {
-//        row = table.insertRow(-1);
-//
-//        for (i = 0; i < size(data); i++ ) {
-//            insertCell(row, name, data[i], way + '-' + name);
-//        }
-//    });
-//
-//    insertTo
-//        .empty()
-//        .append(table);
-//}
-//function insertCell(row, name, data, way) {
-//    var cell    = row.insertCell(-1),
-//        p, _cell;
-//
-//    if (data) {
-//        cell.setAttribute('way', way);
-//        _cell   = $(cell);
-//
-//        p   = document.createElement('p');
-//        p.innerHTML = '<strong>Name:</strong> ' + name;
-//        cell.appendChild(p);
-//
-//        switch (data.status) {
-//            case -2:
-//                cell.className  = 'danger';
-//                insertOld(cell, data, name, way);
-//                break;
-//            case -1:
-//                insertOld(cell, data, name, way);
-//                break;
-//            case 1:
-//                cell.className  = 'warning';
-//                insertChange(cell, data, name, way);
-//                break;
-//            case 2:
-//                cell.className  = 'success';
-//                insertNew(cell, data, name, way);
-//                break;
-//        }
-//    }
-//}
+    span
+        .addClass('p5 key linked')
+        .text(name + ': ');
+
+    $('<small/>')
+        .addClass('text-muted')
+        .text('(' + data.type + ')')
+        .appendTo(span);
+
+    return span;
+}
+function insertChange(name, data, way) {
+    var span        = $('<span/>');
+
+    span
+        .addClass('p5 key linked')
+        .append(name + ': ');
+
+    $('<small/>')
+        .addClass('text-muted')
+        .text('(' + data.type + ')')
+        .appendTo(span);
+
+    span.append(' > ');
+
+    $('<small/>')
+        .addClass('text-muted')
+        .text('(' + data.newType + ')')
+        .appendTo(span);
+
+    return span;
+}
+function insertNew(name, data, way) {
+    var span        = $('<span/>');
+
+    span
+        .addClass('p5 key')
+        .append(name + ': ');
+
+    $('<small/>')
+        .addClass('text-muted')
+        .text('(' + data.newType + ')')
+        .appendTo(span);
+
+    return span;
+}
+function insertValue(data, type, way) {
+    if (type == 'object') {
+        return createTable(data, way);
+    } else if (type == 'string') {
+        return '"' + data + '"';//TODO make decode some data
+    } else {
+        return data;
+    }
+}
+
+/*
+
+ <span class="p5 key linked">
+ key:
+ <small class="text-muted"><i>(object)</i></small>
+ <span class="text-muted obj">{<small>...</small>}</span>
+ </span>
+ */
+
+
 //function insertOld(cell, data, name, way) {
 //    if (data.type == 'object') {
 //        createTable(data.value, $(cell), way);

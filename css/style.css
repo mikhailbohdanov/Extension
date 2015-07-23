@@ -65,41 +65,23 @@ body {
 .key {
     display: block;
 }
-.key.linked {
-    cursor: pointer;
-}
 
-
-
-
-
-
-p[toggler] {
-    cursor: pointer;
-}
-p[toggler]:hover {
-    background-color: #e1e1e1;
-}
-
-
-.key[parent] {
-    cursor: pointer;
-}
-.key {
-    display: block;
-}
-.key:hover {
-    text-decoration: none;
-    background-color: rgba(0, 0, 0, 0.1);
-}
-.key.active > .obj {
+table > tbody > tr > td > div {
     display: none;
 }
-.active {
-    background-color: rgba(0, 0, 0, 0.03);
+table > tbody > tr > td.actived > div {
+    display: block;
 }
 
-
+table > tbody > tr > td.success {
+    background-color: rgba(223, 240, 216, 0.5) !important;
+}
+table > tbody > tr > td.warning {
+    background-color: rgba(252, 248, 227, 0.5) !important;
+}
+table > tbody > tr > td.danger {
+    background-color: rgba(242, 222, 222, 0.5) !important;
+}
 
 .table .table {
     background-color: transparent;
