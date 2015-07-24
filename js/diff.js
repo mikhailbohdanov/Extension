@@ -9,6 +9,9 @@ var domain = $('#domain'),
     cookiesWrapper = $('#cookiesWrapper'),
 
     localStorageDiff = $('#localStorageDiff'),
+    localStorageWrapper = $('#localStorageWrapper'),
+
+    localStorageDiff = $('#localStorageDiff'),
 
     BUILDED_ELEMENTS = {},
 
@@ -19,6 +22,13 @@ function init() {
         var length = SNAPSHOT.states.length,
             grid = [];
 
+        if (SNAPSHOT.config.cookies) {
+            cookiesDiff.removeClass('hidden');
+        }
+
+        if (SNAPSHOT.config.localStorage) {
+            localStorageDiff.removeClass('hidden');
+        }
 
         forEach(SNAPSHOT.states, function (state) {
             grid.push(state.time);
@@ -43,7 +53,6 @@ function init() {
             }
         });
     }
-
 }
 
 function diff(oldObj, newObj, oldHasOwn, newHasOwn) {
@@ -373,46 +382,6 @@ function insertValue(data, type, way) {
         return data;
     }
 }
-
-/*
-
- <span class="p5 key linked">
- key:
- <small class="text-muted"><i>(object)</i></small>
- <span class="text-muted obj">{<small>...</small>}</span>
- </span>
- */
-
-
-//function insertOld(cell, data, name, way) {
-//    if (data.type == 'object') {
-//        createTable(data.value, $(cell), way);
-//    } else {
-//        var p = document.createElement('p');
-//        p.innerHTML = name + ': ' + data.value;
-//
-//        cell.appendChild(p);
-//    }
-//}
-//function insertChange(cell, data, name, way) {
-//    if (data.type == 'object') {
-//
-//    } else {
-//
-//    }
-//}
-//function insertNew(cell, data, name, way) {
-//    if (data.type == 'object') {
-//
-//    } else {
-//
-//    }
-//}
-//
-//function toggleData(way) {
-//
-//}
-
 
 $(function () {
     var search = {};

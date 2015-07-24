@@ -14,12 +14,14 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         case 'removeCookies':
 
             break;
-
         case 'clearAll':
             clearCookies();
             clearLocalStorage();
             break;
 
+        case 'getLocalStorage':
+            sendResponse(getLocalStorage());
+            break;
     }
 });
 
@@ -33,8 +35,6 @@ function clearCookies() {
 function clearLocalStorage() {
 
 }
-
-
 
 (function(open) {
 

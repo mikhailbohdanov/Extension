@@ -432,3 +432,9 @@ function deleteCookie(name, context) {
     }, context);
 }
 //- - - /Cookies - - -
+
+// - - - Local Storage - - -
+function getLocalStorage() {
+    return localStorage;
+}
+// - - - /Local Storage - - -

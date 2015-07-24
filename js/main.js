@@ -10,7 +10,6 @@ var BUTTONS = {},
     _currentTab,
     _url;
 
-
 function focusOrCreateTab(url) {
     chrome.windows.getAll({"populate": true}, function (windows) {
         var existing_tab = null;
@@ -163,8 +162,17 @@ function collectData(snapshot, callBack) {
         });
     }
 
-    if (this.config.localStorage) {
+    if (snapshot.config.localStorage) {
+        done.localStorage = false;
 
+        chrome.tabs.sendRequest(_currentTab.id, function(response) {
+            state.localStorage = response;
+
+            console.log(response);
+
+            done.localStorage = true;
+            _callBack();
+        });
     }
 }
 
