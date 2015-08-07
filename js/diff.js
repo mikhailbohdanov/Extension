@@ -11,7 +11,8 @@ var domain = $('#domain'),
     localStorageDiff = $('#localStorageDiff'),
     localStorageWrapper = $('#localStorageWrapper'),
 
-    localStorageDiff = $('#localStorageDiff'),
+    sessionStorageDiff = $('#sessionStorageDiff'),
+    sessionStorageWrapper = $('#sessionStorageWrapper'),
 
     BUILDED_ELEMENTS = {},
 
@@ -28,6 +29,10 @@ function init() {
 
         if (SNAPSHOT.config.localStorage) {
             localStorageDiff.removeClass('hidden');
+        }
+
+        if (SNAPSHOT.config.sessionStorage) {
+            sessionStorageDiff.removeClass('hidden');
         }
 
         forEach(SNAPSHOT.states, function (state) {
@@ -184,6 +189,14 @@ function diffState(indexFirst, indexLast) {
             _diff.cookies = diff(state1.cookies, state2.cookies);
         }
 
+        if (SNAPSHOT.config.localStorage) {
+            _diff.localStorage = diff(state1.localStorage, state2.localStorage);
+        }
+
+        if (SNAPSHOT.config.sessionStorage) {
+            _diff.sessionStorage = diff(state1.sessionStorage, state2.sessionStorage);
+        }
+
         diffs.push(_diff);
     }
 
@@ -216,6 +229,58 @@ function buildTable(data) {
         cookiesWrapper
             .empty()
             .append(createTable(tableData, 'cookies'));
+    }
+
+    if (SNAPSHOT.config.localStorage) {
+        // Local Storage
+
+        tableData = {};
+
+        for (i = 0; i < data.length; i++) {
+            tmp = data[i].localStorage.value;
+
+            forEach(tmp, function (localStorage, name) {
+                if (!tableData[name]) {
+                    tableData[name] = [];
+                }
+
+                tableData[name][i] = localStorage;
+            });
+        }
+
+        forEach(tableData, function(values) {
+            values.length = data.length;
+        });
+
+        localStorageWrapper
+            .empty()
+            .append(createTable(tableData, 'localStorage'));
+    }
+
+    if (SNAPSHOT.config.sessionStorage) {
+        // Session Storage
+
+        tableData = {};
+
+        for (i = 0; i < data.length; i++) {
+            tmp = data[i].sessionStorage.value;
+
+            forEach(tmp, function (sessionStorage, name) {
+                if (!tableData[name]) {
+                    tableData[name] = [];
+                }
+
+                tableData[name][i] = sessionStorage;
+            });
+        }
+
+        forEach(tableData, function(values) {
+            values.length = data.length;
+        });
+
+        sessionStorageWrapper
+            .empty()
+            .append(createTable(tableData, 'sessionStorage'));
     }
 
 

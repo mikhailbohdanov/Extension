@@ -64,6 +64,7 @@ body {
 
 .key {
     display: block;
+    cursor: pointer;
 }
 
 table > tbody > tr > td > div {

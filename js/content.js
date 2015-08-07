@@ -3,7 +3,7 @@
  */
 console.log('content script here');
 
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     switch (request.action) {
         case 'getCookies':
             sendResponse(getCookies());
@@ -21,6 +21,9 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 
         case 'getLocalStorage':
             sendResponse(getLocalStorage());
+            break;
+        case 'getSessionStorage':
+            sendResponse(getSessionStorage());
             break;
     }
 });

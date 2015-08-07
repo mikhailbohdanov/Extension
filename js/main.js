@@ -165,12 +165,21 @@ function collectData(snapshot, callBack) {
     if (snapshot.config.localStorage) {
         done.localStorage = false;
 
-        chrome.tabs.sendRequest(_currentTab.id, function(response) {
-            state.localStorage = response;
-
-            console.log(response);
+        chrome.tabs.sendMessage(_currentTab.id, {action: 'getLocalStorage'}, function(response) {
+            state.localStorage = response || {};
 
             done.localStorage = true;
+            _callBack();
+        });
+    }
+
+    if (snapshot.config.sessionStorage) {
+        done.sessionStorage = false;
+
+        chrome.tabs.sendMessage(_currentTab.id, {action: 'getSessionStorage'}, function(response) {
+            state.sessionStorage = response || {};
+
+            done.sessionStorage = true;
             _callBack();
         });
     }
@@ -280,7 +289,7 @@ var commonFN = {
 };
 //- - - /Main - - -
 document.addEventListener('DOMContentLoaded', function () {
-    chrome.tabs.query({active: true}, function (tab) {
+    chrome.tabs.query({active: true, currentWindow: true}, function (tab) {
         _currentTab = tab[0];
         _url = new URL(_currentTab.url);
 

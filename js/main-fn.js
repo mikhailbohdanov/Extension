@@ -438,3 +438,9 @@ function getLocalStorage() {
     return localStorage;
 }
 // - - - /Local Storage - - -
+
+// - - - Local Session - - -
+function getSessionStorage() {
+    return sessionStorage;
+}
+// - - - /Local Session - - -
