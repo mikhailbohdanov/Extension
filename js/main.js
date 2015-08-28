@@ -153,7 +153,7 @@ function collectData(snapshot, callBack) {
                     domain      : cookie.domain,
                     expiration  : cookie.expirationDate,
                     path        : cookie.path,
-                    value       : cookie.value
+                    value       : decodeData(cookie.value)
                 };
             });
 
@@ -184,6 +184,43 @@ function collectData(snapshot, callBack) {
         });
     }
 }
+function decodeData(data) {
+    var decoders, tmp;
+
+    do {
+        decoders = size(DECODER);
+
+        forEach(DECODER, function(decoder) {
+            tmp = decoder(data);
+
+            if (isDefined(tmp) && tmp != data && !equals(tmp, data) && !isBoolean(tmp)) {
+                data    = tmp;
+                decoders++;
+            } else {
+                decoders--;
+            }
+        });
+
+    } while (decoders > 0);
+
+    return data;
+}
+var DECODER = {
+    url     : function(data) {
+        try {
+            return decodeURIComponent(data);
+        } catch (e) {
+            return undefined;
+        }
+    },
+    json    : function(data) {
+        try {
+            return JSON.parse(data);
+        } catch (e) {
+            return undefined;
+        }
+    }
+};
 
 var commonFN = {
     showFormSnapshot: function () {
