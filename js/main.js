@@ -168,6 +168,10 @@ function collectData(snapshot, callBack) {
         chrome.tabs.sendMessage(_currentTab.id, {action: 'getLocalStorage'}, function(response) {
             state.localStorage = response || {};
 
+            forEach(state.localStorage, function(value, key) {
+                this[key] = decodeData(value)
+            }, state.localStorage);
+
             done.localStorage = true;
             _callBack();
         });
@@ -178,6 +182,10 @@ function collectData(snapshot, callBack) {
 
         chrome.tabs.sendMessage(_currentTab.id, {action: 'getSessionStorage'}, function(response) {
             state.sessionStorage = response || {};
+
+            forEach(state.sessionStorage, function(value, key) {
+                this[key] = decodeData(value)
+            }, state.sessionStorage);
 
             done.sessionStorage = true;
             _callBack();
@@ -374,11 +382,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
  */
-
-
-
-
-
 
 
 

@@ -356,11 +356,13 @@ function insertCell(row, name, data, way) {
         }
 
         span.on('click', function() {
-            forEach(BUILDED_ELEMENTS[way], function(_cell) {
-                _cell.toggleClass('actived');
-            });
-
             row.toggleClass('actived');
+
+            if (row.hasClass('actived')) {
+                rowsOpen(way);
+            } else {
+                rowsClose(way);
+            }
         });
         cell
             .append(span);
@@ -387,6 +389,42 @@ function insertCell(row, name, data, way) {
     }
 
     row.append(cell);
+}
+function rowsOpen(rowName) {
+    var maxHeight   = 0;
+
+    forEach(BUILDED_ELEMENTS[rowName], function(_cell) {
+        _cell.addClass('actived');
+        _cell[0].style.height = null;
+
+        if (_cell.height() > maxHeight) {
+            maxHeight = _cell.height();
+        }
+    });
+
+    forEach(BUILDED_ELEMENTS[rowName], function(_cell) {
+        _cell.height(maxHeight);
+    });
+}
+function rowsClose(rowName) {
+    forEach(BUILDED_ELEMENTS[rowName], function(_cell) {
+        _cell.removeClass('actived');
+        _cell[0].style.height = null;
+    });
+
+    var exp = new RegExp('^' + rowName + '(.*)$');
+    forEach(BUILDED_ELEMENTS, function (_row, way) {
+        if (exp.test(way)) {
+            forEach(_row, function(_cell) {
+                _cell
+                    .removeClass('actived')
+                    .parent('tr')
+                    .removeClass('actived');
+
+                _cell[0].style.height = null;
+            });
+        }
+    });
 }
 
 function insertOld(name, data, way) {
